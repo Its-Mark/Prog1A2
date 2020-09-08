@@ -82,10 +82,10 @@ public class Main {
                 //means target is exactly/approximately what was found |Na^2 - Mb^2| < b holds true
                 return newFrac;
             }  else if (left.compareTo(right) < 0) {
-                //means target is going to be less than what ever was tested. keep smaller fraction. move left on "tree"
+                //means target is going to be less than what ever was tested. keep smaller fractions. move left on "tree"
                 fractions[0] = newFrac;
             } else if (left.compareTo(right) > 0){
-                //means target is going to be greater than what ever was tested. keep bigger fraction. move right on "tree"
+                //means target is going to be greater than what ever was tested. keep bigger fractions. move right on "tree"
                 fractions[1] = newFrac;
             } //end comparisons
             counter++;
