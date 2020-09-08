@@ -29,7 +29,7 @@ public class Main {
         try {
             long start = System.currentTimeMillis();
             //take inputs from file
-            File fin = new File("input1.txt");
+            File fin = new File("input.txt");
             Scanner scan = new Scanner(fin);
             M = new BigInteger(scan.nextLine());
             N = new BigInteger(scan.nextLine());
@@ -37,7 +37,7 @@ public class Main {
             //find the fricken fraction
             solution = findFraction(M,N);
             //write output file
-            File fout = new File("output5.txt");
+            File fout = new File("output.txt");
             PrintWriter pw = new PrintWriter(fout);
             pw.write(solution.num.toString().stripTrailing() + "\n");
             pw.write(solution.den.toString().stripTrailing());
