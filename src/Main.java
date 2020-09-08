@@ -27,21 +27,25 @@ public class Main {
     public static void main(String[] args){
         BigInteger M; BigInteger N; Fraction solution;
         try {
+            long start = System.currentTimeMillis();
             //take inputs from file
-            File fin = new File("input.txt");
+            File fin = new File("input1.txt");
             Scanner scan = new Scanner(fin);
             M = new BigInteger(scan.nextLine());
             N = new BigInteger(scan.nextLine());
+            System.out.println("Given Fraction : [" + M.toString() + "," + N.toString() + "]");
             //find the fricken fraction
             solution = findFraction(M,N);
             //write output file
             File fout = new File("output5.txt");
             PrintWriter pw = new PrintWriter(fout);
-            pw.write(solution.num.toString() + "\n");
-            pw.write(solution.den.toString());
+            pw.write(solution.num.toString().stripTrailing() + "\n");
+            pw.write(solution.den.toString().stripTrailing());
             pw.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            long end = System.currentTimeMillis();
+            System.out.println("RUNTIME: " + (end - start) + " millis");
+        } catch (FileNotFoundException fnfe) {
+            fnfe.printStackTrace();
         }
 
     }
@@ -53,37 +57,40 @@ public class Main {
      * @return the target fraction from the given M and N values
      */
     public static Fraction findFraction(BigInteger M, BigInteger N){
-        int counter = 1;
+        int counter = 1; // num of iterations
+        // at most only two fractions will need to be used.
+        // DO NOT TRY TO MAKE AN ACTUAL TREE. (see attempt 1)
+        // THE INSTRUCTIONS DONT SAY MAKE A TREE AND KEEP EVERY VALUE FOR REFERENCE LATER
         Fraction[] fractions = new Fraction[2];
         fractions[0] = new Fraction(new BigInteger("0"), new BigInteger("1")); //start with 0,1 on the left
         fractions[1] = new Fraction(new BigInteger("1"), new BigInteger("0")); //start with 1,0 on the right
 
-        while(true){
+        while(0==0){
             System.out.println("ATTEMPT: " + counter);
-            // (a1+a2) /
+            // (a1+a2) / (b1+b2)
             Fraction newFrac = addFraction(fractions[0], fractions[1]);
             // Na^2
             BigInteger left = N.multiply(newFrac.num.pow(2));
             // Mb^2
             BigInteger right = M.multiply(newFrac.den.pow(2));
             // |Na^2 - Mb^2|
-            BigInteger absDif = left.subtract(right);
-            absDif = absDif.abs();
-
+            BigInteger absDif = (left.subtract(right)).abs();
+            //print out current fractions at hand
+            System.out.println(fractions[0].toString() + fractions[1].toString() + newFrac.toString());
             //MAKE COMPARISONS OF NEW FRAC AND TARGET
             if (absDif.compareTo(newFrac.den) < 0) {
-                //means target is exactly what was tested &FRACTION FOUND |Na^2 - Mb^2| < b
+                //means target is exactly/approximately what was found |Na^2 - Mb^2| < b holds true
                 return newFrac;
             }  else if (left.compareTo(right) < 0) {
-                //means target is going to be greater than what ever was tested. keep bigger fraction. move right on tree
+                //means target is going to be less than what ever was tested. keep smaller fraction. move left on "tree"
                 fractions[0] = newFrac;
             } else if (left.compareTo(right) > 0){
-                //means target is going to be less than what ever was tested. keep smaller fraction. move left on tree
+                //means target is going to be greater than what ever was tested. keep bigger fraction. move right on "tree"
                 fractions[1] = newFrac;
             } //end comparisons
             counter++;
 
-        } //end while loop
+        } //end loop
     }
 
     /**
@@ -95,17 +102,8 @@ public class Main {
         private BigInteger den;
 
         /**
-         * Default Constructor
-         * Creates Fraction in the form 0/0
-         */
-        public Fraction(){
-            this.num = new BigInteger("0");
-            this.den = new BigInteger("0");
-        }
-
-        /**
          * Parameterized Constructor
-         * Creates Fraction in the for numerator / denominator
+         * Creates Fraction in the form (numerator, denominator)
          * @param numerator
          * @param denominator
          */
@@ -141,13 +139,18 @@ public class Main {
             return 2; // this will never happen but i need a return statement out of the if/else
         }
 
+        @Override
+        public String toString(){
+            return ("[" + this.num.toString() + "," + this.den.toString() + "] ");
+        }
+
     }
 
     /**
      * Add 2 fractions numerators and denominators to create a new fraction
      * (a1+a2) / (b1+b2) where a's are the fractions numerators and b's are the fractions denominators
-     * @param left
-     * @param right
+     * @param left Fraction
+     * @param right Fraction
      * @return sum of fractions
      */
     public static Fraction addFraction(Fraction left, Fraction right){
